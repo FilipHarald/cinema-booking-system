@@ -22,7 +22,7 @@ class Screening extends Model
      */
     public function movie()
     {
-    	$this->belongsTo(Movie::class);
+    	return $this->belongsTo(Movie::class);
     }
 
     /**
@@ -30,7 +30,7 @@ class Screening extends Model
      */
     public function bookings()
     {
-    	$this->hasMany(Booking::class);	
+    	return $this->hasMany(Booking::class);	
     }
 
     /**
@@ -38,6 +38,6 @@ class Screening extends Model
      */
     public function screen()
     {
-    	$this->belongsTo(Screen::class);
+    	return $this->belongsTo(Screen::class);
     }
 }

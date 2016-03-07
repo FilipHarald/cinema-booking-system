@@ -12,7 +12,7 @@ class Screen extends Model
      * @var array
      */
     protected $fillable = [
-         
+         "name",
     ];
 
     /**
@@ -20,7 +20,7 @@ class Screen extends Model
      */
     public function screenings()
     {
-    	$this->hasMany(Screening::class);
+    	return $this->hasMany(Screening::class);
     }
 
     /**
@@ -28,6 +28,6 @@ class Screen extends Model
      */
     public function seats()
     {
-    	$this->hasMany(Seat::class);
+    	return $this->hasMany(Seat::class);
     }
 }

@@ -14,24 +14,26 @@ class Booking extends Model
     protected $fillable = [
         'email', 
         'screening_id',
-        'seat_id',
+        //'seat_id',
         'payment_id',
     ];
+
+    public $with = ['screening.movie', 'seats'];
 
     /**
      *
      */
     public function screening()
     {
-    	$this->belongsTo(Screening::class);
+    	return $this->belongsTo(Screening::class);
     }
 
     /**
      *
      */
-    public function seat()
+    public function seats()
     {
-        $this->belongsTo(Seat::class);
+        return $this->belongsToMany(Seat::class);
     }
 
     /**
@@ -39,6 +41,6 @@ class Booking extends Model
      */
     public function user()
     {
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }

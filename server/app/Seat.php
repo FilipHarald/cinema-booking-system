@@ -12,9 +12,10 @@ class Seat extends Model
      * @var array
      */
     protected $fillable = [
+        'number',
         'row',
         'screen_id',
-        'booking_id', 
+        //'booking_id', 
     ];
 
     /**
@@ -22,7 +23,7 @@ class Seat extends Model
      */
     public function booking()
     {
-    	$this->belongsTo(Booking::class);
+    	return $this->belongsToMany(Booking::class);
     }
 
     /**
@@ -30,6 +31,6 @@ class Seat extends Model
      */
     public function screen()
     {
-    	$this->belongsTo(Screen::class);
+    	return $this->belongsTo(Screen::class);
     }
 }

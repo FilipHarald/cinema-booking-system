@@ -19,6 +19,6 @@ class Movie extends Model
 
     public function screenings() 
     {
-    	$this->hasMany(Screening::class);
+    	return $this->hasMany(Screening::class);
     }
 }
