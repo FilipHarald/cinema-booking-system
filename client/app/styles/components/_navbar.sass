@@ -1,0 +1,23 @@
+.navbar-custom
+  background: $primary
+  border-radius: 0
+  border-bottom: 1px solid darken($primary, 20%)
+  box-shadow: 0 0 10px rgba(black, 0.4)
+
+  .navbar-brand
+    color: white
+
+  .navbar-nav li a
+    transition: all 250ms
+    color: white
+    &:hover, &:focus, &.active
+      background: darken($primary, 10%)
+
+  #navbar-search
+    margin-left: 0.5rem
+
+  .dropdown-menu
+    li a
+      color: $primary
+      &:hover, &:focus, &.active
+        background: lighten($primary, 60%)

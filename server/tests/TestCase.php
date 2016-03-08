@@ -22,4 +22,12 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $app;
     }
+
+    /**
+     *
+     */
+    public function dontSeeInDatabase($table, array $data, $connection = null)
+    {
+        return !$this->seeInDatabase($table, $data, $connection);
+    }
 }
