@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Request;
 use App\Http\Requests\BookingRequest;
 
 use App\Http\Requests;
@@ -14,6 +14,10 @@ use App\User;
 
 class BookingController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -61,6 +65,27 @@ class BookingController extends Controller
         //return response()->json([], 201);
     }
 
+    public function update(Booking $booking) {
+        $request = Request::instance();
+
+        $content = json_decode($request->getContent());
+
+        if ($content == null)
+            return response()->json(["Error" => "Unable to find update parameters"]);
+
+        $array = array();
+
+        foreach ($content as $key => $value) {
+            $array[$key] = $value;
+        }
+
+        $booking->update($array);
+
+        $booking->save();
+
+        return response()->json(Booking::find($booking->id), 200);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -86,6 +111,6 @@ class BookingController extends Controller
         $booking->delete();
         
 
-        return response()->json(['status', 'deleted'], 201);
+        return response()->json(['status', 'deleted'], 200);
     }
 }

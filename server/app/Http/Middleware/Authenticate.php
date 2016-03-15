@@ -25,11 +25,8 @@ class Authenticate
 
         //return response(["user" => $user, "pwd" => $pwd]);
 
-        if (!$user)
-            return response("User not found", 401);
-
-        if (!password_verify($pwd, $user->password))
-            return response("Unauthorized login", 401);
+        if (!$user || !password_verify($pwd, $user->password))
+            return response(["Error" => "Unauthorized login"], 401);
 
         return $next($request);
     }
