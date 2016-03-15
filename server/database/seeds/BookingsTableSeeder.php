@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Booking;
+use App\User;
 
 class BookingsTableSeeder extends Seeder
 {
@@ -13,6 +14,7 @@ class BookingsTableSeeder extends Seeder
     public function run()
     {
     	for ($i = 0; $i < 5; $i++) {
+    		/*
 	        factory(Booking::class)
 	        	->create(['screening_id' => rand(1, 10)])
 	        	->each(function($booking) {
@@ -21,7 +23,11 @@ class BookingsTableSeeder extends Seeder
 
 	        		$booking->seats()->attach($seats);
 
-	        	});
+	        	});*/
+			//$user = User::orderBy('RANDOM()')->get();
+			$user = User::all()->random(1);
+
+			$user->bookings()->save(factory(Booking::class)->create(['screening_id' => rand(1, 10), 'user_id' => rand(1,5)]));
     	}
     }
 }
