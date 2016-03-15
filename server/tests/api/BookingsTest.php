@@ -29,11 +29,11 @@ class BookingsTest extends TestCase
                 "seat_ids"=> 200
 
             ], [], [], $server);
-                
+
         $this->assertResponseStatus(201);
 
         $json = json_decode($response->getContent());
-        
+
         $this->seeInDatabase('bookings', ['id' => $json->id]);
     }
 
@@ -46,19 +46,19 @@ class BookingsTest extends TestCase
                 "email"=> "test@test.com",
                 "payment_id"=> "123asdq23123",
                 "screening_id"=> 1,
-                
+
                 "seat_ids"=> 200
 
             ]);
 
         $this->assertResponseStatus(401);
-        
+
         $this->seeJson([
             'Error' => "Unauthorized login"
             ]);
     }
 
-    
+
     /** @test */
     public function it_can_be_removed_by_an_authenticated_user()
     {
@@ -112,7 +112,7 @@ class BookingsTest extends TestCase
         $booking = Booking::all()->random(1,8);
         $email = "aasdasdasd@example.com";
 
-        $this->call("PUT", "/bookings/{$booking->id}?_method=PUT", [
+        $res = $this->call("PUT", "/bookings/{$booking->id}", [
                 'email' => $email
             ], [], [], $server);
 
@@ -141,7 +141,7 @@ class BookingsTest extends TestCase
 
         $this
             ->call('GET', "/bookings/{$booking->id}", [], [], [], $server);
-            
+
         $this->assertResponseStatus(200);
 
         $this->seeJson([
@@ -162,5 +162,5 @@ class BookingsTest extends TestCase
     }
 
 
-    
+
 }

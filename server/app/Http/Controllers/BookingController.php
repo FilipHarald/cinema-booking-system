@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Request;
-use App\Http\Requests\BookingRequest;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Booking;
-use App\Screening;
 use App\Seat;
 use App\User;
+use App\Booking;
+use App\Screening;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BookingRequest;
 
 class BookingController extends Controller
 {
@@ -41,7 +40,7 @@ class BookingController extends Controller
     {
         if ($request->user_id == null || !User::find($request->user_id))
             return response()->json(["error" => "user not authenticated"], 401);
-        
+
         $booking = new Booking;
 
         $booking->email = $request->email;
@@ -52,38 +51,22 @@ class BookingController extends Controller
         //$seats = Seat::where("id", $request->seat_ids);
         $user = User::find($request->user_id);
 
-        $booking->screening()->associate($screening);   
+        $booking->screening()->associate($screening);
         $booking->user()->associate($user);
 
         $booking->save();
 
         $booking->seats()->attach($request->seat_ids);
-        
+
         return response()->json(Booking::find($booking->id), 201);
-        
+
 
         //return response()->json([], 201);
     }
 
-    public function update(Booking $booking) {
-        $request = Request::instance();
-
-        $content = json_decode($request->getContent());
-
-        if ($content == null)
-            return response()->json(["Error" => "Unable to find update parameters"]);
-
-        $array = array();
-
-        foreach ($content as $key => $value) {
-            $array[$key] = $value;
-        }
-
-        $booking->update($array);
-
-        $booking->save();
-
-        return response()->json(Booking::find($booking->id), 200);
+    public function update(Request $request, Booking $booking) {
+        $booking->update($request->all());
+        return response()->json($booking, 200);
     }
 
     /**
@@ -94,7 +77,7 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
-        
+
         return [
             "booking" => $booking
         ];
@@ -109,7 +92,7 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         $booking->delete();
-        
+
 
         return response()->json(['status', 'deleted'], 200);
     }
