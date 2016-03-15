@@ -13,7 +13,12 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_be_created_by_an_authenticated_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::where(["email" => "test@test.com"])->first();
+
+        $server = [
+            "PHP_AUTH_USER" => $user->email,
+            "PHP_AUTH_PW" => "abcdef",
+        ];
 
         //response = $this->actingAs($user)
         $response = $this->call('POST', '/bookings', [
@@ -23,7 +28,7 @@ class BookingsTest extends TestCase
                 "user_id"=> $user->id,
                 "seat_ids"=> 200
 
-            ]);
+            ], [], [], $server);
                 
         $this->assertResponseStatus(201);
 
@@ -49,7 +54,7 @@ class BookingsTest extends TestCase
         $this->assertResponseStatus(401);
         
         $this->seeJson([
-            'error' => "user not authenticated"
+            'Error' => "Unauthorized login"
             ]);
     }
 
@@ -57,20 +62,25 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_be_removed_by_an_authenticated_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::where(["email" => "test@test.com"])->first();
+
+        $server = [
+            "PHP_AUTH_USER" => $user->email,
+            "PHP_AUTH_PW" => "abcdef",
+        ];
         //$screen = factory(Screen::class)->create();
         //$booking = factory(Booking::class)->create();
         $booking = Booking::all()->random(1,8);
 
-        $this->call('DELETE', "/bookings/{$booking->id}");
+        $this->call('DELETE', "/bookings/{$booking->id}", [], [], [], $server);
 
         // $this->seeJson([
         //         "status" => 'deleted'
         // ]);
 
-        $this->assertResponseStatus(201);
+        $this->assertResponseStatus(200);
 
-        $this->dontSeeInDatabase('bookings', ['id' => $booking->id]);
+        $this->notSeeInDatabase('bookings', ['id' => $booking->id]);
     }
 
     /** @test */
@@ -78,43 +88,59 @@ class BookingsTest extends TestCase
     {
         $booking = Booking::all()->random(1,8);
 
-        $this->call('DELETE', "/bookings/{$booking->id}")
-            ->seeJson([
+        $this->call('DELETE', "/bookings/{$booking->id}");
 
-            ])
-            ->seeInDatabase('bookings', ['id' => $booking->id]);
+        $this->seeJson([
+            "Error" => "Unauthorized login"
+            ]);
 
-            $this->assertResponseStatus(401);
+        $this->seeInDatabase('bookings', ['id' => $booking->id]);
+
+        $this->assertResponseStatus(401);
     }
 
     /** @test */
     public function it_can_be_changed_by_an_authenticated_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::where(["email" => "test@test.com"])->first();
+
+        $server = [
+            "PHP_AUTH_USER" => $user->email,
+            "PHP_AUTH_PW" => "abcdef",
+        ];
+
         $booking = Booking::all()->random(1,8);
         $email = "aasdasdasd@example.com";
 
-        $this->actingAs($user)
-            ->call('PUT', "/bookings/{$booking->id}", [
-                'email' => $email,
-            ])
-            ->seeJson([
+        $this->call("PUT", "/bookings/{$booking->id}?_method=PUT", [
+                'email' => $email
+            ], [], [], $server);
 
-            ])
-            ->seeInDatabase('bookings', ['id' => $booking->id, 'email' => $email]);
+        $this->seeJson([
+                "email" => $email
+            ]);
 
-            $this->assertResponseStatus(200);
+        $this->seeInDatabase('bookings', ['id' => $booking->id, 'email' => $email]);
+
+        $this->assertResponseStatus(200);
+
     }
 
 
     /** @test */
     public function it_can_be_viewed_by_an_authenticated_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::where(["email" => "test@test.com"])->first();
+
+        $server = [
+            "PHP_AUTH_USER" => $user->email,
+            "PHP_AUTH_PW" => "abcdef",
+        ];
+
         $booking = Booking::all()->random(1,8);
 
-        $this->actingAs($user)
-            ->call('GET', "/bookings/{$booking->id}");
+        $this
+            ->call('GET', "/bookings/{$booking->id}", [], [], [], $server);
             
         $this->assertResponseStatus(200);
 

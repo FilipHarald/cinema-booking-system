@@ -35,14 +35,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     }
 
     /**
-     *
-     */
-    public function dontSeeInDatabase($table, array $data, $connection = null)
-    {
-        return !$this->seeInDatabase($table, $data, $connection);
-    }
-
-    /**
      * Migrates the database and set the mailer to 'pretend'.
      * This will cause the tests to run quickly.
      */
