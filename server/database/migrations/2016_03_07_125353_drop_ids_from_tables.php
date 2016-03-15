@@ -29,11 +29,11 @@ class DropIdsFromTables extends Migration
     public function down()
     {
         Schema::table('bookings', function(Blueprint $table) {
-            $table->integer('seat_id')->unsigned()->index();
+            $table->integer('seat_id')->unsigned()->index()->default(0);
         });
         
         Schema::table('seats', function(Blueprint $table) {
-            $table->integer('booking_id')->unsigned()->index();
+            $table->integer('booking_id')->unsigned()->index()->default(0);
         });
 
     }
