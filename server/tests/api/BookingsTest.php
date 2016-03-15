@@ -153,7 +153,12 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_not_be_viewed_by_unauthenticated_user()
     {
-        
+        $booking = Booking::all()->random(1,5);
+
+        $this->call('GET', "/bookings/{$booking->id}");
+
+        $this->assertResponseStatus(401);
+
     }
 
 
