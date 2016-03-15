@@ -4,7 +4,9 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
+use App\User;
 use App\Screening;
+use App\Booking;
 
 class BookingTest extends TestCase
 {
@@ -13,13 +15,13 @@ class BookingTest extends TestCase
     /** @test */
     public function it_should_only_return_seats_that_are_not_already_booked()
     {
+        $user = factory(User::class)->create();
         $screening = factory(Screening::class)->create();
 
         # Change this to work with Seats
         factory(Booking::class)->create([
             'screening_id' => $screening->id,
-            'row' => 8,
-            'number' => 6
+            'user_id' => $user->id,
         ]);
 
         $seats = $screening->getRemainingSeats();

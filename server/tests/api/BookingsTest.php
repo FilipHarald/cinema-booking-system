@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\User;
+use App\Booking;
 
 class BookingsTest extends TestCase
 {
@@ -14,24 +16,27 @@ class BookingsTest extends TestCase
         $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)
-            ->call('POST', '/bookings', [
+            ->json('POST', '/bookings', [
 
-            ])
-            ->assertResponseStatus(201)
+            ]);
+        
+        $this->assertResponseStatus(201);
+
+        /*
             ->seeJson([
 
             ]);
 
-
+        */
         $this->seeInDatabase('bookings', ['' => '']);
     }
 
     /** @test */
     public function it_cannot_be_created_by_an_unauthenticated_user()
     {
-        $this->call('POST', '/bookings')
-            ->assertResponseStatus(401)
-            ->seeJson([
+        $this->call('POST', '/bookings');
+        $this->assertResponseStatus(401);
+        $this->seeJson([
 
             ]);
     }
@@ -40,7 +45,11 @@ class BookingsTest extends TestCase
     public function it_can_be_removed_by_an_authenticated_user()
     {
         $user = factory(User::class)->create();
-        $booking = factory(Booking::class)->create();
+        //$screen = factory(Screen::class)->create();
+        //$booking = factory(Booking::class)->create();
+        $booking = Booking::all()->random(1);
+
+
 
         $this->actingAs($user)
             ->call('DELETE', "/bookings/{$booking->id}")
@@ -97,4 +106,6 @@ class BookingsTest extends TestCase
                 "email" => $booking->email,
             ]);
     }
+
+    
 }
