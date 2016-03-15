@@ -81,18 +81,11 @@ class BookingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Booking $booking)
     {
-        $deleted = false;
-        $booking = Booking::find($id);
+        $booking->delete();
+        
 
-        if ($booking->id == $id) {
-            $booking->delete();
-            $deleted = true;
-        }
-
-        return [
-            "deleted" => $deleted
-        ];
+        return response()->json(['status', 'deleted'], 201);
     }
 }

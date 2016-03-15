@@ -24,16 +24,8 @@ class BookingsTest extends TestCase
                 "seat_ids"=> 200
 
             ]);
-
-        //print_r($response->content());
-        
+                
         $this->assertResponseStatus(201);
-
-        /*
-        $this->seeJson([
-
-            ]);
-        */
 
         $json = json_decode($response->getContent());
         
@@ -68,65 +60,76 @@ class BookingsTest extends TestCase
         $user = factory(User::class)->create();
         //$screen = factory(Screen::class)->create();
         //$booking = factory(Booking::class)->create();
-        $booking = Booking::all()->random(1);
+        $booking = Booking::all()->random(1,8);
 
+        $this->call('DELETE', "/bookings/{$booking->id}");
 
+        // $this->seeJson([
+        //         "status" => 'deleted'
+        // ]);
 
-        $this->actingAs($user)
-            ->call('DELETE', "/bookings/{$booking->id}")
-            ->seeJson([
+        $this->assertResponseStatus(201);
 
-            ])
-            ->dontSeeInDatabase('bookings', ['id' => $booking->id]);
+        $this->dontSeeInDatabase('bookings', ['id' => $booking->id]);
     }
 
     /** @test */
     public function it_cannot_be_removed_by_an_unauthenticated_user()
     {
-        $booking = factory(Booking::class)->create();
+        $booking = Booking::all()->random(1,8);
 
         $this->call('DELETE', "/bookings/{$booking->id}")
-            ->assertResponseStatus(401)
             ->seeJson([
 
             ])
             ->seeInDatabase('bookings', ['id' => $booking->id]);
+
+            $this->assertResponseStatus(401);
     }
 
     /** @test */
     public function it_can_be_changed_by_an_authenticated_user()
     {
         $user = factory(User::class)->create();
-        $booking = factory(Booking::class)->create();
+        $booking = Booking::all()->random(1,8);
         $email = "aasdasdasd@example.com";
 
         $this->actingAs($user)
             ->call('PUT', "/bookings/{$booking->id}", [
                 'email' => $email,
             ])
-            ->assertResponseStatus(200)
             ->seeJson([
 
             ])
             ->seeInDatabase('bookings', ['id' => $booking->id, 'email' => $email]);
+
+            $this->assertResponseStatus(200);
     }
 
-    /**
-     *
-     */
+
+    /** @test */
     public function it_can_be_viewed_by_an_authenticated_user()
     {
         $user = factory(User::class)->create();
-        $booking = factory(Booking::class)->create();
+        $booking = Booking::all()->random(1,8);
 
         $this->actingAs($user)
-            ->call('GET', "/bookings/{$booking->id}")
-            ->assertResponseStatus(200)
-            ->seeJson([
-                "id" => $booking->id,
-                "email" => $booking->email,
-            ]);
+            ->call('GET', "/bookings/{$booking->id}");
+            
+        $this->assertResponseStatus(200);
+
+        $this->seeJson([
+            "id" => $booking->id,
+            "email" => $booking->email,
+        ]);
     }
+
+    /** @test */
+    public function it_can_not_be_viewed_by_unauthenticated_user()
+    {
+        
+    }
+
 
     
 }
