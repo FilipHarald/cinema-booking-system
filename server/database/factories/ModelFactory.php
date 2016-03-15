@@ -50,6 +50,8 @@ $factory->define(App\Movie::class, function(Faker\Generator $faker) {
 $factory->define(App\Screening::class, function(Faker\Generator $faker) {
 	return [
 		"start_time" => $faker->dateTimeBetween('-1 month', 'now'),
+		"movie_id" => 0,
+		"screen_id" => 0,
 	];
 });
 
