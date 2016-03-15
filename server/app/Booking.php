@@ -19,7 +19,7 @@ class Booking extends Model
         'user_id',
     ];
 
-    public $with = ['screening.movie', 'seats'];
+    public $with = ['screening.movie', 'seats', 'user'];
 
     /**
      *

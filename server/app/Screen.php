@@ -15,6 +15,8 @@ class Screen extends Model
          "name",
     ];
 
+    public $with = ['seats'];
+
     /**
      *
      */
