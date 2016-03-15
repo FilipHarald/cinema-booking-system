@@ -16,6 +16,7 @@ class Booking extends Model
         'screening_id',
         //'seat_id',
         'payment_id',
+        'user_id',
     ];
 
     public $with = ['screening.movie', 'seats'];
