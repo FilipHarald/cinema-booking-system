@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class Authenticate
 {
@@ -17,13 +18,18 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->guest()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return response('Unauthorized.', 401);
-            } else {
-                return redirect()->guest('login');
-            }
-        }
+        $user = $request->header("PHP_AUTH_USER");
+        $pwd = $request->header("PHP_AUTH_PW");
+
+        $user = User::where(['email' => $user])->first();
+
+        //return response(["user" => $user, "pwd" => $pwd]);
+
+        if (!$user)
+            return response("User not found", 401);
+
+        if (!password_verify($pwd, $user->password))
+            return response("Unauthorized login", 401);
 
         return $next($request);
     }
