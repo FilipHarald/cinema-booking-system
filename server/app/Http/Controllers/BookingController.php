@@ -24,46 +24,40 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::all();
-        return [
-            "bookings" => $bookings
-        ];
+        return ['bookings' => Booking::all()];
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\BookingRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(BookingRequest $request)
     {
-        if ($request->user_id == null || !User::find($request->user_id))
-            return response()->json(["error" => "user not authenticated"], 401);
+        if (! $request->user_id || ! $user = User::find($request->user_id)) {
+            return response()->json(['error' => 'user not authenticated'], 401);
+        }
 
-        $booking = new Booking;
-
-        $booking->email = $request->email;
-        $booking->payment_id = $request->payment_id;
-
-        $screening = Screening::find($request->screening_id);
-        //$seats = $screening->screen->seat->where("id", $request->input('seat_ids'));
-        //$seats = Seat::where("id", $request->seat_ids);
-        $user = User::find($request->user_id);
-
-        $booking->screening()->associate($screening);
-        $booking->user()->associate($user);
-
-        $booking->save();
+        $booking = Booking::create([
+            'email' => $request->email,
+            'payment_id' => $request->payment_id,
+            'screening_id' => $request->screening_id,
+            'user_id' => $request->user_id,
+        ]);
 
         $booking->seats()->attach($request->seat_ids);
 
-        return response()->json(Booking::find($booking->id), 201);
-
-
-        //return response()->json([], 201);
+        return response()->json($booking->fresh(), 201);
     }
 
+    /**
+     * Update a booking in the database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Booking  $booking
+     * @return \Illuminate\Http\Response
+     */
     public function update(Request $request, Booking $booking) {
         $booking->update($request->all());
         return response()->json($booking, 200);
@@ -77,10 +71,7 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
-
-        return [
-            "booking" => $booking
-        ];
+        return ['booking' => $booking];
     }
 
     /**
@@ -92,8 +83,6 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         $booking->delete();
-
-
-        return response()->json(['status', 'deleted'], 200);
+        return response()->json(['status' => 'deleted'], 200);
     }
 }

@@ -13,22 +13,20 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_be_created_by_an_authenticated_user()
     {
-        $user = User::where(["email" => "test@test.com"])->first();
+        $user = User::where(['email' => 'test@test.com'])->first();
 
         $server = [
-            "PHP_AUTH_USER" => $user->email,
-            "PHP_AUTH_PW" => "abcdef",
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW' => 'abcdef',
         ];
 
-        //response = $this->actingAs($user)
         $response = $this->call('POST', '/bookings', [
-                "email"=> "test@test.com",
-                "payment_id"=> "123asdq23123",
-                "screening_id"=> 1,
-                "user_id"=> $user->id,
-                "seat_ids"=> 200
-
-            ], [], [], $server);
+            'email' => 'test@test.com',
+            'payment_id' => '123asdq23123',
+            'screening_id' => 1,
+            'user_id' => $user->id,
+            'seat_ids' => 200
+        ], [], [], $server);
 
         $this->assertResponseStatus(201);
 
@@ -42,41 +40,37 @@ class BookingsTest extends TestCase
     public function it_cannot_be_created_by_an_unauthenticated_user()
     {
         $this->json('POST', '/bookings', [
-
-                "email"=> "test@test.com",
-                "payment_id"=> "123asdq23123",
-                "screening_id"=> 1,
-
-                "seat_ids"=> 200
-
-            ]);
+            'email' => 'test@test.com',
+            'payment_id' => '123asdq23123',
+            'screening_id' => 1,
+            'seat_ids' => 200
+        ]);
 
         $this->assertResponseStatus(401);
 
         $this->seeJson([
-            'Error' => "Unauthorized login"
-            ]);
+            'Error' => 'Unauthorized login',
+        ]);
     }
 
 
     /** @test */
     public function it_can_be_removed_by_an_authenticated_user()
     {
-        $user = User::where(["email" => "test@test.com"])->first();
+        $user = User::where(['email' => 'test@test.com'])->first();
 
         $server = [
-            "PHP_AUTH_USER" => $user->email,
-            "PHP_AUTH_PW" => "abcdef",
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW' => 'abcdef',
         ];
-        //$screen = factory(Screen::class)->create();
-        //$booking = factory(Booking::class)->create();
+
         $booking = Booking::all()->random(1,8);
 
         $this->call('DELETE', "/bookings/{$booking->id}", [], [], [], $server);
 
-        // $this->seeJson([
-        //         "status" => 'deleted'
-        // ]);
+        $this->seeJson([
+            'status' => 'deleted'
+        ]);
 
         $this->assertResponseStatus(200);
 
@@ -91,8 +85,8 @@ class BookingsTest extends TestCase
         $this->call('DELETE', "/bookings/{$booking->id}");
 
         $this->seeJson([
-            "Error" => "Unauthorized login"
-            ]);
+            'Error' => 'Unauthorized login',
+        ]);
 
         $this->seeInDatabase('bookings', ['id' => $booking->id]);
 
@@ -102,23 +96,23 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_be_changed_by_an_authenticated_user()
     {
-        $user = User::where(["email" => "test@test.com"])->first();
+        $user = User::where(['email' => 'test@test.com'])->first();
 
         $server = [
-            "PHP_AUTH_USER" => $user->email,
-            "PHP_AUTH_PW" => "abcdef",
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW' => 'abcdef',
         ];
 
         $booking = Booking::all()->random(1,8);
-        $email = "aasdasdasd@example.com";
+        $email = 'aasdasdasd@example.com';
 
-        $res = $this->call("PUT", "/bookings/{$booking->id}", [
-                'email' => $email
-            ], [], [], $server);
+        $this->call('PUT', "/bookings/{$booking->id}", [
+            'email' => $email
+        ], [], [], $server);
 
         $this->seeJson([
-                "email" => $email
-            ]);
+            'email' => $email
+        ]);
 
         $this->seeInDatabase('bookings', ['id' => $booking->id, 'email' => $email]);
 
@@ -130,23 +124,22 @@ class BookingsTest extends TestCase
     /** @test */
     public function it_can_be_viewed_by_an_authenticated_user()
     {
-        $user = User::where(["email" => "test@test.com"])->first();
+        $user = User::where(['email' => 'test@test.com'])->first();
 
         $server = [
-            "PHP_AUTH_USER" => $user->email,
-            "PHP_AUTH_PW" => "abcdef",
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW' => 'abcdef',
         ];
 
         $booking = Booking::all()->random(1,8);
 
-        $this
-            ->call('GET', "/bookings/{$booking->id}", [], [], [], $server);
+        $this->call('GET', "/bookings/{$booking->id}", [], [], [], $server);
 
         $this->assertResponseStatus(200);
 
         $this->seeJson([
-            "id" => $booking->id,
-            "email" => $booking->email,
+            'id' => $booking->id,
+            'email' => $booking->email,
         ]);
     }
 
@@ -158,9 +151,5 @@ class BookingsTest extends TestCase
         $this->call('GET', "/bookings/{$booking->id}");
 
         $this->assertResponseStatus(401);
-
     }
-
-
-
 }
