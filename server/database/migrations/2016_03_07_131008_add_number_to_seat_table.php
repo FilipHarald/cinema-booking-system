@@ -13,7 +13,7 @@ class AddNumberToSeatTable extends Migration
     public function up()
     {
         Schema::table('seats', function (Blueprint $table) {
-            $table->integer('number')->unsigned()->index();
+            $table->integer('number')->unsigned()->index()->default(0);
         });
     }
 

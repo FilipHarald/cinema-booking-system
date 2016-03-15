@@ -13,7 +13,7 @@ class AddEmailColumnToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email');
+            $table->string('email')->default("");
         });
     }
 

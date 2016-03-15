@@ -13,7 +13,7 @@ class AddNameToScreensTable extends Migration
     public function up()
     {
         Schema::table('screens', function (Blueprint $table) {
-            $table->string("name");
+            $table->string("name")->default("");
         });
     }
 
